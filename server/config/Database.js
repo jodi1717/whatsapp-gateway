@@ -1,25 +1,18 @@
 // server/config/Database.js
-
-const { Sequelize } = require("sequelize");
+import { Sequelize } from 'sequelize';
 
 const sequelize = new Sequelize(process.env.MYSQL_URL, {
-  dialect: "mysql",
+  dialect: 'mysql',
   logging: false,
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false
-    }
-  }
 });
 
-const connectDatabase = async () => {
+export default async function connectDatabase() {
   try {
     await sequelize.authenticate();
-    console.log("✅ Koneksi ke database berhasil.");
+    console.log('✅ MySQL Connected!');
   } catch (error) {
-    console.error("❌ Gagal koneksi ke MySQL:", error);
+    console.error('❌ Gagal koneksi ke MySQL:', error);
   }
-};
+}
 
-module.exports = { sequelize, connectDatabase };
+export { sequelize };
