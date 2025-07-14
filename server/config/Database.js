@@ -1,24 +1,25 @@
-import { Sequelize } from "sequelize";
-import { modules } from "../../lib/index.js";
-import { moment } from "./index.js";
+// server/config/Database.js
 
-const { MYSQL_URL } = process.env;
+const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize(MYSQL_URL, {
+const sequelize = new Sequelize(process.env.MYSQL_URL, {
   dialect: "mysql",
   logging: false,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
+  }
 });
 
-async function connectDatabase() {
+const connectDatabase = async () => {
   try {
     await sequelize.authenticate();
-    console.log(modules.color("[APP]", "#EB6112"), modules.color(moment().format("DD/MM/YY HH:mm:ss"), "#F8C471"), modules.color(`✅ Connected to MySQL via Railway`, "#82E0AA"));
-
-    await sequelize.sync({ force: false, alter: false });
-    console.log(modules.color("[APP]", "#EB6112"), modules.color(moment().format("DD/MM/YY HH:mm:ss"), "#F8C471"), modules.color(`🔁 Re-Sync Database`, "#82E0AA"));
+    console.log("✅ Koneksi ke database berhasil.");
   } catch (error) {
     console.error("❌ Gagal koneksi ke MySQL:", error);
   }
-}
+};
 
-export { connectDatabase, sequelize };
+module.exports = { sequelize, connectDatabase };
